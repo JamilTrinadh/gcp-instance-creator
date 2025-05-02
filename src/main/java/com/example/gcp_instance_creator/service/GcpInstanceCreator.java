@@ -57,4 +57,35 @@ public class GcpInstanceCreator {
         }
     }
 
+    public String createImageFromDisk(String imageName, String sourceDiskZone, String sourceDiskName) {
+        try {
+            GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream(CREDENTIALS_PATH));
+
+            ImagesClient imagesClient = ImagesClient.create(
+                    ImagesSettings.newBuilder()
+                            .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+                            .build()
+            );
+
+            String sourceDiskLink = String.format(
+                    "projects/%s/zones/%s/disks/%s",
+                    PROJECT_ID, sourceDiskZone, sourceDiskName
+            );
+
+            Image image = Image.newBuilder()
+                    .setName(imageName)
+                    .setSourceDisk(sourceDiskLink)
+                    .build();
+
+            Operation operation = imagesClient.insertAsync(PROJECT_ID, image).get();
+
+            return "Custom image creation started: " + operation.getName();
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return "Error creating image: " + e.getMessage();
+        }
+    }
+
+
+
 }

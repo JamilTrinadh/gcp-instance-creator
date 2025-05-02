@@ -22,5 +22,13 @@ public class GcpInstanceCreatorController {
         return gcpInstanceCreator.createInstance(instanceName, zone);
     }
 
+    @PostMapping("/create-image")
+    public String createImageFromDisk(
+            @RequestParam String imageName,
+            @RequestParam String diskZone,
+            @RequestParam String diskName) {
+        return gcpInstanceCreator.createImageFromDisk(imageName, diskZone, diskName);
+    }
+
 
 }
