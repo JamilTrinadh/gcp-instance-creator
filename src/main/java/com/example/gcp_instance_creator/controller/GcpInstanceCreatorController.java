@@ -30,5 +30,15 @@ public class GcpInstanceCreatorController {
         return gcpInstanceCreator.createImageFromDisk(imageName, diskZone, diskName);
     }
 
+    @PostMapping("/create-snapshot")
+    public String createSnapshot(
+            @RequestParam String diskName,
+            @RequestParam String zone,
+            @RequestParam String snapshotName,
+            @RequestParam(defaultValue = "Snapshot created via API") String description
+    ) {
+        return gcpInstanceCreator.createSnapshot(diskName, zone, snapshotName, description);
+    }
+
 
 }

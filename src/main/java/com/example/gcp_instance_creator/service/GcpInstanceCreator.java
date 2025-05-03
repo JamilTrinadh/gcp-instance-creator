@@ -86,6 +86,30 @@ public class GcpInstanceCreator {
         }
     }
 
+    public String createSnapshot(String diskName, String zone, String snapshotName, String description) {
+        try {
+            GoogleCredentials credentials = GoogleCredentials.fromStream(new FileInputStream(CREDENTIALS_PATH));
+
+            DisksClient disksClient = DisksClient.create(
+                    DisksSettings.newBuilder()
+                            .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+                            .build()
+            );
+
+            Snapshot snapshot = Snapshot.newBuilder()
+                    .setName(snapshotName)
+                    .setDescription(description)
+                    .build();
+
+            Operation operation = disksClient.createSnapshotAsync(PROJECT_ID, zone, diskName, snapshot).get();
+
+            return "Snapshot creation started: " + operation.getName();
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return "Error creating snapshot: " + e.getMessage();
+        }
+    }
+
 
 
 }
